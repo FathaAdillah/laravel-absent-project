@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\EmployeeController;
 
 Route::get('/', function () {
     return view('pages.auth.auth-login');
@@ -16,8 +17,8 @@ Route::middleware(['auth'])->group(function () {
     })->name('home');
 
     Route::resource('users', UserController::class);
-    Route::resource('employees', EmployeeController::class);
     Route::resource('companies', CompanyController::class);
     Route::resource('attendances', AttendanceController::class);
     Route::resource('permissions', PermissionController::class);
+    Route::resource('employees', EmployeeController::class);
 });
