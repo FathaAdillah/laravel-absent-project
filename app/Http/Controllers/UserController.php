@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Employee;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -12,8 +13,11 @@ class UserController extends Controller
     public function index()
     {
         //search by name, pagination 10
-        $users = User::where('name', 'like', '%' . request('name') . '%')
-            ->orderBy('id', 'desc')
+        $users = User::select('users.id', 'users.name', 'users.email', 'users.phone', 'positions.title', 'users.created_at')
+            ->leftJoin('employees', 'employees.id', '=', 'users.employees_id')
+            ->leftJoin('positions', 'positions.id', '=', 'employees.positions_id')
+            ->where('users.name', 'like', '%' . request('name') . '%')
+            ->orderByDesc('users.id')
             ->paginate(10);
         return view('pages.users.index', compact('users'));
     }
@@ -21,12 +25,14 @@ class UserController extends Controller
     //create
     public function create()
     {
-        return view('pages.users.create');
+        $employees = Employee::all();
+        return view('pages.users.create', compact('employees'));
     }
 
     //store
     public function store(Request $request)
     {
+
         $request->validate([
             'name' => 'required',
             'email' => 'required|email',
@@ -38,18 +44,25 @@ class UserController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'role' => $request->role,
+            'employees_id' => $request->employee,
             'password' => Hash::make($request->password),
-            'position' => $request->position,
-            'department' => $request->department,
+            // 'position' => $request->position,
+            // 'department' => $request->department,
         ]);
 
         return redirect()->route('users.index')->with('success', 'User created successfully');
     }
 
     //edit
-    public function edit(User $user)
+    public function edit($id)
     {
-        return view('pages.users.edit', compact('user'));
+        $user = User::select('users.id', 'users.name', 'users.email', 'users.phone', 'positions.title', 'users.created_at', 'employees.name as employee_name', 'users.role')
+            ->leftJoin('employees', 'employees.id', '=', 'users.employees_id')
+            ->leftJoin('positions', 'positions.id', '=', 'employees.positions_id')
+            ->where('users.id', $id)->first();
+        $employees = Employee::all();
+
+        return view('pages.users.edit', compact('user','employees'));
     }
 
     //update
@@ -65,8 +78,9 @@ class UserController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'role' => $request->role,
-            'position' => $request->position,
-            'department' => $request->department,
+            'employee_id' => $request->employee,
+            // 'position' => $request->position,
+            // 'department' => $request->department,
         ]);
 
         //if password filled

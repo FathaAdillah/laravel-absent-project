@@ -13,12 +13,12 @@
             <div class="section-header">
                 <h1>Users</h1>
                 <div class="section-header-button">
-                    <a href="{{ route('users.create') }}" class="btn btn-primary">Add New</a>
+                    <a href="{{ route('employees.create') }}" class="btn btn-primary">Add New</a>
                 </div>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="#">Users</a></div>
-                    <div class="breadcrumb-item">All Users</div>
+                    <div class="breadcrumb-item"><a href="#">Employee</a></div>
+                    <div class="breadcrumb-item">All Employee</div>
                 </div>
             </div>
             <div class="section-body">
@@ -27,7 +27,7 @@
                         @include('layouts.alert')
                     </div>
                 </div>
-                <h2 class="section-title">Users</h2>
+                <h2 class="section-title">Employee</h2>
                 <p class="section-lead">
                     You can manage all Users, such as editing, deleting and more.
                 </p>
@@ -42,7 +42,7 @@
                             <div class="card-body">
 
                                 <div class="float-right">
-                                    <form method="GET" action="{{ route('users.index') }}">
+                                    <form method="GET" action="{{ route('employees.index') }}">
                                         <div class="input-group">
                                             <input type="text" class="form-control" placeholder="Search" name="name">
                                             <div class="input-group-append">
@@ -59,35 +59,35 @@
                                         <tr>
 
                                             <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Phone</th>
+                                            <th>Birthplace</th>
+                                            <th>Birthdate</th>
+                                            {{-- <th>Position</th> --}}
+                                            <th>Jabatan</th>
                                             <th>Position</th>
-                                            {{-- <th>Created At</th> --}}
                                             <th>Action</th>
                                         </tr>
-                                        @foreach ($users as $item)
+                                        @foreach ($employees as $employee)
                                             <tr>
 
-                                                <td>{{ $item->name }}
+                                                <td>{{ $employee->name }}
                                                 </td>
                                                 <td>
-                                                    {{ $item->email }}
+                                                    {{ $employee->birthplace }}
                                                 </td>
                                                 <td>
-                                                    {{ $item->phone }}
+                                                    {{ $employee->birthdate }}
                                                 </td>
-                                                <td>
-                                                    {{ $item->title }}
-                                                </td>
+                                                <td>{{ $employee->jabatan }}</td>
+
+                                                <td>{{ $employee->posisi }}</td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <a href='{{ route('users.edit', $item->id) }}'
+                                                        <a href='{{ route('employees.edit', $employee->id) }}'
                                                             class="btn btn-sm btn-info btn-icon">
                                                             <i class="fas fa-edit"></i>
                                                             Edit
                                                         </a>
-
-                                                        <form action="{{ route('users.destroy', $item->id) }}"
+                                                        <form action="{{ route('employees.destroy', $employee->id) }}"
                                                             method="POST" class="ml-2">
                                                             <input type="hidden" name="_method" value="DELETE" />
                                                             <input type="hidden" name="_token"
@@ -100,12 +100,10 @@
                                                 </td>
                                             </tr>
                                         @endforeach
-
-
                                     </table>
                                 </div>
                                 <div class="float-right">
-                                    {{ $users->withQueryString()->links() }}
+                                    {{ $employees->withQueryString()->links() }}
                                 </div>
                             </div>
                         </div>

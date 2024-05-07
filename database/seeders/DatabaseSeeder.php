@@ -17,15 +17,15 @@ class DatabaseSeeder extends Seeder
         User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Bahri Admin',
-            'email' => 'bahri@fic16.com',
+            'name' => 'Jungkook Admin',
+            'email' => 'jungkook@fic16.com',
             'password' => Hash::make('12345678'),
         ]);
 
         // data dummy for company
         \App\Models\Company::create([
             'name' => 'PT. FIC16',
-            'email' => 'fic16@codewithbahri.com',
+            'email' => 'fic16gmail.com',
             'address' => 'Jl. Raya Kedung Turi No. 20, Sleman, DIY',
             'latitude' => '-7.747033',
             'longitude' => '110.355398',

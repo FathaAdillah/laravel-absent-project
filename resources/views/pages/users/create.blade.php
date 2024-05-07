@@ -86,7 +86,7 @@
                                 <label>Phone</label>
                                 <input type="number" class="form-control" name="phone">
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label>Position</label>
                                 <input type="text"
                                     class="form-control @error('position')
@@ -111,6 +111,10 @@
                                         {{ $message }}
                                     </div>
                                 @enderror
+                            </div> --}}
+                            <div class="form-group">
+                                <label for="employee" class="form-label">Employee</label>
+                                <input type="text" class="form-control" name="employee" id="employee" value="">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Roles</label>
@@ -140,8 +144,110 @@
 
             </div>
         </section>
+        <div class="modal fade" tabindex="-1" role="dialog" id="modal-employee">
+            <div class="modal-dialog modal-lg" role="main">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Select Employee</h5>
+
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>Employees</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="search">Search</label>
+                                    <input type="search" class="form-control" id="search">
+                                </div>
+                                <table class="table table-hover" id="employee-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Name</th>
+                                            {{-- <th scope="col">Jabatan</th> --}}
+                                            <th scope="col">Position</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($employees as $employee)
+                                            <tr>
+                                                <td>{{ $employee->id }}</td>
+                                                <td>{{ $employee->name }}</td>
+                                                {{-- <td>{{ $employee->jabatan->title}}</td> --}}
+                                                <td>{{ $employee->position->title }}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary select-employee"
+                                                        data-employee-id="{{ $employee->id }}"
+                                                        data-employee-name="{{ $employee->name }}">Select</button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-whitesmoke br">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
 @push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#employee').click(function() {
+                $('#modal-employee').modal('show');
+            });
+        });
+        // $(document).ready(function() {
+        //     $('.select-employee').click(function() {
+        //         var employeeId = $(this).data('employee-id');
+        //         var employeeName = $(this).data('employee-name');
+        //         $('#employee').val(employeeName);
+        //         $('#employee_id').val(employeeId);
+        //         $('#modal-employee').modal('hide');
+        //     });
+        // });
+        $(document).ready(function() {
+            $('#search').keyup(function() {
+                var searchText = $(this).val().toLowerCase();
+
+                // Loop through all table rows
+                $('#employee-table tbody tr').each(function() {
+                    var employeeName = $(this).find('td:eq(1)').text().toLowerCase();
+
+                    // If the search text is found in the employee name, show the row, otherwise hide it
+                    if (employeeName.includes(searchText)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        });
+        $(document).ready(function() {
+            $('.select-employee').on('click', function() {
+                var employeeId = $(this).data('employee-id');
+                var employeeName = $(this).data('employee-name');
+
+                // Set the selected employee in the form select element
+                $('#employee').append($('<option>', {
+                    value: employeeId,
+                    text: employeeName
+                }));
+                // Close the modal
+                $('#modal-employee').modal('hide');
+            });
+        });
+    </script>
 @endpush

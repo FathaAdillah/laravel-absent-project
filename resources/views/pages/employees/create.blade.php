@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit User')
+@section('title', 'Advanced Forms')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -30,9 +30,8 @@
 
 
                 <div class="card">
-                    <form action="{{ route('users.update', $user) }}" method="POST">
+                    <form action="{{ route('employees.store') }}" method="POST">
                         @csrf
-                        @method('PUT')
                         <div class="card-header">
                             <h4>Input Text</h4>
                         </div>
@@ -43,7 +42,7 @@
                                     class="form-control @error('name')
                                 is-invalid
                             @enderror"
-                                    name="name" value="{{ $user->name }}">
+                                    name="name">
                                 @error('name')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -56,7 +55,7 @@
                                     class="form-control @error('email')
                                 is-invalid
                             @enderror"
-                                    name="email" value="{{ $user->email }}">
+                                    name="email">
                                 @error('email')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -85,7 +84,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Phone</label>
-                                <input type="number" class="form-control" name="phone" value="{{ $user->phone }}">
+                                <input type="number" class="form-control" name="phone">
                             </div>
                             {{-- <div class="form-group">
                                 <label>Position</label>
@@ -93,7 +92,7 @@
                                     class="form-control @error('position')
                                 is-invalid
                             @enderror"
-                                    name="position" value="{{ $user->position }}">
+                                    name="position">
                                 @error('position')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -106,34 +105,33 @@
                                     class="form-control @error('department')
                                 is-invalid
                             @enderror"
-                                    name="department" value="{{ $user->department }}">
-                                @error('departement')
+                                    name="department">
+                                @error('department')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
                                 @enderror
                             </div> --}}
                             <div class="form-group">
-                                <label for="employee" class="form-label">Employee</label>
-                                <input type="text" class="form-control" name="employee" id="employee"
-                                    value="{{ $user->employee_name }}">
+                                <label>Employee</label>
+                                <select class="form-control" name="employee" id="employee">
+                                    <option value="">-- Select Employee --</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Roles</label>
                                 <div class="selectgroup w-100">
                                     <label class="selectgroup-item">
                                         <input type="radio" name="role" value="admin" class="selectgroup-input"
-                                            @if ($user->role == 'admin') checked @endif>
+                                            checked="">
                                         <span class="selectgroup-button">Admin</span>
                                     </label>
                                     <label class="selectgroup-item">
-                                        <input type="radio" name="role" value="supervisor" class="selectgroup-input"
-                                            @if ($user->role == 'supervisor') checked @endif>
+                                        <input type="radio" name="role" value="supervisor" class="selectgroup-input">
                                         <span class="selectgroup-button">Supervisor</span>
                                     </label>
                                     <label class="selectgroup-item">
-                                        <input type="radio" name="role" value="staff" class="selectgroup-input"
-                                            @if ($user->role == 'staff') checked @endif>
+                                        <input type="radio" name="role" value="staff" class="selectgroup-input">
                                         <span class="selectgroup-button">Staff</span>
                                     </label>
 
@@ -148,96 +146,24 @@
 
             </div>
         </section>
-        <div class="modal fade" tabindex="-1" role="dialog" id="modal-employee">
-            <div class="modal-dialog modal-lg" role="main">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Select Employee</h5>
-
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>Employees</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label for="search">Search</label>
-                                    <input type="search" class="form-control" id="search">
-                                </div>
-                                <table class="table table-hover" id="employee-table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">ID</th>
-                                            <th scope="col">Name</th>
-                                            {{-- <th scope="col">Jabatan</th> --}}
-                                            <th scope="col">Position</th>
-                                            <th scope="col"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($employees as $employee)
-                                            <tr>
-                                                <td>{{ $employee->id }}</td>
-                                                <td>{{ $employee->name }}</td>
-                                                {{-- <td>{{ $employee->jabatan->title}}</td> --}}
-                                                <td>{{ $employee->position->title }}</td>
-                                                <td>
-                                                    <button type="button" class="btn btn-primary select-employee"
-                                                        data-employee-id="{{ $employee->id }}"
-                                                        data-employee-name="{{ $employee->name }}">Select</button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer bg-whitesmoke br">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 @endsection
 
 @push('scripts')
-    <script>
-        $(document).ready(function() {
-            $('#employee').click(function() {
-                $('#modal-employee').modal('show');
-            });
-        });
-        $(document).ready(function() {
-            $('.select-employee').click(function() {
-                var employeeId = $(this).data('employee-id');
-                var employeeName = $(this).data('employee-name');
-                $('#employee').val(employeeName);
-                $('#employee_id').val(employeeId);
-                $('#modal-employee').modal('hide');
-            });
-        });
-        $(document).ready(function() {
-            $('#search').keyup(function() {
-                var searchText = $(this).val().toLowerCase();
-
-                // Loop through all table rows
-                $('#employee-table tbody tr').each(function() {
-                    var employeeName = $(this).find('td:eq(1)').text().toLowerCase();
-
-                    // If the search text is found in the employee name, show the row, otherwise hide it
-                    if (employeeName.includes(searchText)) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            url: '/allemployee',
+            type: 'GET',
+            success: function(response) {
+                response.data.forEach(function(employee) {
+                    $('#employee').append('<option value="' + employee.id + '">' + employee.name + '</option>');
                 });
-            });
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
         });
+    });
     </script>
 @endpush
